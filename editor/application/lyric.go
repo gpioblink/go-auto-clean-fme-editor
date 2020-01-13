@@ -6,7 +6,7 @@ import (
 )
 
 type lyricReadModel interface {
-	ListAllProducts() ([]lyric.Lyric, error)
+	ListAllLyrics() ([]lyric.Lyric, error)
 }
 
 type LyricService struct {
@@ -19,7 +19,7 @@ func NewLyricService(lyricReadModel lyricReadModel, lyricRepository lyric.Reposi
 }
 
 func (s LyricService) ListLyrics() ([]lyric.Lyric, error) {
-	return s.lyricReadModel.ListAllProducts()
+	return s.lyricReadModel.ListAllLyrics()
 }
 
 func (s LyricService) AddLyric(lyric lyric.Lyric) error {
@@ -30,10 +30,46 @@ func (s LyricService) AddLyric(lyric lyric.Lyric) error {
 	return nil
 }
 
-func (s LyricService) EditLyric(lyric lyric.Lyric, index int) error {
-	err := s.lyricRepository.Update(&lyric, index)
+func (s LyricService) EditLyric(cmd EditLyricCommand) error {
+
+	// get original lyric
+	originalLyric, err := s.lyricRepository.ByIndex(cmd.Index)
+	if err != nil {
+		return errors.Wrap(err, "cannot get original lyric")
+	}
+
+	// create lyricString from Lyric
+	newLyricString := lyric.LyricString{}
+	for _, l := range cmd.Lyrics {
+		lc, err := lyric.NewLyricChar(l.LyricChar, l.Length, l.Furigana)
+		if err != nil {
+			return errors.Wrap(err, "creating lyricString failed")
+		}
+
+		newLyricString = append(newLyricString, *lc)
+	}
+
+	// insert lyricString into the original and create a new lyric
+	newLyric, err := lyric.NewLyric(originalLyric.Point(), originalLyric.Colors(), newLyricString)
+	if err != nil {
+		return errors.Wrap(err, "merging lyricString failed")
+	}
+
+	err = s.lyricRepository.Update(newLyric, cmd.Index)
 	if err != nil {
 		return errors.Wrap(err, "cannot update lyric")
 	}
+
 	return nil
+}
+
+type EditLyricCommand struct {
+	Lyrics []EditLyricLyric
+	Index  int
+}
+
+type EditLyricLyric struct {
+	Furigana  string
+	Length    int
+	LyricChar string
 }
