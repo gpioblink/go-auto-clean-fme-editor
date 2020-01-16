@@ -8,3 +8,11 @@ type Point struct {
 func NewPoint(x int, y int) (*Point, error) {
 	return &Point{x, y}, nil
 }
+
+func (p Point) X() int {
+	return p.x
+}
+
+func (p Point) Y() int {
+	return p.y
+}
