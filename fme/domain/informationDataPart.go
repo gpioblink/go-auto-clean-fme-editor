@@ -99,6 +99,5 @@ func (d *InformationDataPart) ExportBinary() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	// bytesData := append(bufHeader.Bytes(), bufBody.Bytes()...)
 	return buf.Bytes(), nil
 }
