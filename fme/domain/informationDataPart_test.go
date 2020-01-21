@@ -8,7 +8,7 @@ import (
 )
 
 func TestInformationDataPart_ExportBinary(t *testing.T) {
-	fme := decodeTestBytes()
+	fme := decodeInformationDataTestBytes()
 	infoData, err := informationDataPart.NewInformationDataPartFromBinary(fme)
 	assert.NoError(t, err)
 
@@ -18,7 +18,7 @@ func TestInformationDataPart_ExportBinary(t *testing.T) {
 	assert.EqualValues(t, fme, fmeOut)
 }
 
-func decodeTestBytes() []byte {
+func decodeInformationDataTestBytes() []byte {
 	kimigayoBase64 := "AAAcACMAKAAtADQAPQBEAE0ARgAIAAAAAAAAAIxOgqqR4wCNkYnMAIzDicwAl9GNTI7nAINMg36DS4OIAINSg2KDSgAwODQzMDM1NwCMToKqkeOCzSCQ55HjgsmUqpDnkeOCyQA="
 	kimigayoBytes, _ := base64.StdEncoding.DecodeString(kimigayoBase64)
 	return kimigayoBytes
