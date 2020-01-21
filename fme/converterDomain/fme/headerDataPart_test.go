@@ -2,14 +2,14 @@ package fme_test
 
 import (
 	"encoding/base64"
-	fme "github.com/gpioblink/go-auto-clean-fme-editor/fme/converterDomain"
+	fme2 "github.com/gpioblink/go-auto-clean-fme-editor/fme/converterDomain/fme"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestHeaderDataPart_ExportBinary(t *testing.T) {
 	fmeData := decodeHeaderTestBytes()
-	headData, err := fme.NewHeaderDataPartFromBinary(fmeData)
+	headData, err := fme2.NewHeaderDataPartFromBinary(fmeData)
 	assert.NoError(t, err)
 
 	fmeOut, err := headData.ExportBinary()
@@ -20,13 +20,13 @@ func TestHeaderDataPart_ExportBinary(t *testing.T) {
 
 func TestCheckMagicValue(t *testing.T) {
 	fmeData := decodeHeaderTestBytes()
-	err := fme.CheckMagicValue(fmeData)
+	err := fme2.CheckMagicValue(fmeData)
 	assert.NoError(t, err)
 }
 
 func TestGetOffset(t *testing.T) {
 	fmeData := decodeHeaderTestBytes()
-	info, lyric, timing, err := fme.GetOffsets(fmeData)
+	info, lyric, timing, err := fme2.GetOffsets(fmeData)
 	assert.NoError(t, err)
 	assert.EqualValues(t, 0x12, info)
 	assert.EqualValues(t, 0x77, lyric)

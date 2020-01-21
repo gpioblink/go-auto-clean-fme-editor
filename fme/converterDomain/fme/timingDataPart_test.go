@@ -2,14 +2,14 @@ package fme_test
 
 import (
 	"encoding/base64"
-	fme "github.com/gpioblink/go-auto-clean-fme-editor/fme/converterDomain"
+	fme2 "github.com/gpioblink/go-auto-clean-fme-editor/fme/converterDomain/fme"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestTimingDataPart_ExportBinary(t *testing.T) {
 	fmeData := decodeTimingTestbytes()
-	timingData, err := fme.NewTimingDataPartFromBinary(fmeData)
+	timingData, err := fme2.NewTimingDataPartFromBinary(fmeData)
 	assert.NoError(t, err)
 
 	fmeOut, err := timingData.ExportBinary()
