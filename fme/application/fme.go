@@ -3,9 +3,7 @@ package application
 import (
 	"github.com/gpioblink/go-auto-clean-fme-editor/fme/converterDomain/fme"
 	"github.com/pkg/errors"
-	"github.com/stretchr/testify/assert"
 	"log"
-	"testing"
 )
 
 type lyricService interface {
