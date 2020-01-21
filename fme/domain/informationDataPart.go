@@ -1,4 +1,4 @@
-package informationDataPart
+package fme
 
 import (
 	"bytes"
@@ -6,11 +6,11 @@ import (
 )
 
 type InformationDataPart struct {
-	Header
-	Body
+	InformationDataPartHeader
+	InformationDataPartBody
 }
 
-type Header struct {
+type InformationDataPartHeader struct {
 	MusicPartsType       uint16
 	MusicNameOffset      uint16
 	SingerNameOffset     uint16
@@ -25,7 +25,7 @@ type Header struct {
 	RhythmTracks         uint32
 }
 
-type Body struct {
+type InformationDataPartBody struct {
 	MusicName      []byte
 	SingerName     []byte
 	LyricWriter    []byte
@@ -39,14 +39,14 @@ type Body struct {
 func NewInformationDataPartFromBinary(fme []byte) (*InformationDataPart, error) {
 	buf := bytes.NewBuffer(fme)
 
-	var header Header
+	var header InformationDataPartHeader
 	err := binary.Read(buf, binary.LittleEndian, &header)
 	if err != nil {
 		return nil, err
 	}
 
 	bodyArray := bytes.SplitAfter(fme[header.MusicNameOffset:], []byte{0x00})
-	body := Body{
+	body := InformationDataPartBody{
 		bodyArray[0],
 		bodyArray[1],
 		bodyArray[2],
@@ -63,39 +63,39 @@ func NewInformationDataPartFromBinary(fme []byte) (*InformationDataPart, error) 
 func (d *InformationDataPart) ExportBinary() ([]byte, error) {
 	bufHeader := new(bytes.Buffer)
 
-	err := binary.Write(bufHeader, binary.LittleEndian, d.Header)
+	err := binary.Write(bufHeader, binary.LittleEndian, d.InformationDataPartHeader)
 	if err != nil {
 		return nil, err
 	}
-	err = binary.Write(bufHeader, binary.LittleEndian, d.Body.MusicName)
+	err = binary.Write(bufHeader, binary.LittleEndian, d.InformationDataPartBody.MusicName)
 	if err != nil {
 		return nil, err
 	}
-	err = binary.Write(bufHeader, binary.LittleEndian, d.Body.SingerName)
+	err = binary.Write(bufHeader, binary.LittleEndian, d.InformationDataPartBody.SingerName)
 	if err != nil {
 		return nil, err
 	}
-	err = binary.Write(bufHeader, binary.LittleEndian, d.Body.LyricWriter)
+	err = binary.Write(bufHeader, binary.LittleEndian, d.InformationDataPartBody.LyricWriter)
 	if err != nil {
 		return nil, err
 	}
-	err = binary.Write(bufHeader, binary.LittleEndian, d.Body.MusicWriter)
+	err = binary.Write(bufHeader, binary.LittleEndian, d.InformationDataPartBody.MusicWriter)
 	if err != nil {
 		return nil, err
 	}
-	err = binary.Write(bufHeader, binary.LittleEndian, d.Body.MusicNameKana)
+	err = binary.Write(bufHeader, binary.LittleEndian, d.InformationDataPartBody.MusicNameKana)
 	if err != nil {
 		return nil, err
 	}
-	err = binary.Write(bufHeader, binary.LittleEndian, d.Body.SingerNameKana)
+	err = binary.Write(bufHeader, binary.LittleEndian, d.InformationDataPartBody.SingerNameKana)
 	if err != nil {
 		return nil, err
 	}
-	err = binary.Write(bufHeader, binary.LittleEndian, d.Body.JasracCode)
+	err = binary.Write(bufHeader, binary.LittleEndian, d.InformationDataPartBody.JasracCode)
 	if err != nil {
 		return nil, err
 	}
-	err = binary.Write(bufHeader, binary.LittleEndian, d.Body.LyricHead)
+	err = binary.Write(bufHeader, binary.LittleEndian, d.InformationDataPartBody.LyricHead)
 	if err != nil {
 		return nil, err
 	}

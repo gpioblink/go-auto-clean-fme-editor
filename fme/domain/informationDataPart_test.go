@@ -1,4 +1,4 @@
-package informationDataPart_test
+package fme_test
 
 import (
 	"encoding/base64"
