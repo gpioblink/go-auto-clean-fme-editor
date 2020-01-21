@@ -39,6 +39,10 @@ func (d *HeaderDataPart) ExportBinary() ([]byte, error) {
 	return bufHeader.Bytes(), nil
 }
 
+func (d *HeaderDataPart) GetOffsets() (infoDataOffset uint32, lyricOffset uint32, timingOffset uint32) {
+	return d.InformationDataPartOffset, d.LyricOffset, d.TimingOffset
+}
+
 var ErrInvalidMagicNumber = errors.New("invalid magic")
 
 func CheckMagicValue(fme []byte) error {
