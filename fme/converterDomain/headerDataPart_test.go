@@ -2,7 +2,7 @@ package fme_test
 
 import (
 	"encoding/base64"
-	fme "github.com/gpioblink/go-auto-clean-fme-editor/fme/domain"
+	fme "github.com/gpioblink/go-auto-clean-fme-editor/fme/converterDomain"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
