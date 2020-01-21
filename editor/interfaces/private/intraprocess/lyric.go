@@ -95,73 +95,73 @@ func (p LyricInterface) AddLyric(l AddLyricLyric) error {
 	return p.service.AddLyric(*newLyric)
 }
 
-type lyricView struct {
-	Point  lyricViewPoint       `json:"point"`
-	Colors lyricViewColorPicker `json:"colors"`
-	Lyric  lyricViewLyricString `json:"lyric"`
+type LyricView struct {
+	Point  LyricViewPoint       `json:"point"`
+	Colors LyricViewColorPicker `json:"colors"`
+	Lyric  LyricViewLyricString `json:"lyric"`
 }
 
-type lyricViewPoint struct {
+type LyricViewPoint struct {
 	X int `json:"x"`
 	Y int `json:"y"`
 }
 
-type lyricViewColorPicker struct {
-	BeforeCharColor    lyricViewColorPickerColor `json:"beforeCharColor"`
-	AfterCharColor     lyricViewColorPickerColor `json:"afterCharColor"`
-	BeforeOutlineColor lyricViewColorPickerColor `json:"beforeOutlineColor"`
-	AfterOutlineColor  lyricViewColorPickerColor `json:"afterOutlineColor"`
+type LyricViewColorPicker struct {
+	BeforeCharColor    LyricViewColorPickerColor `json:"beforeCharColor"`
+	AfterCharColor     LyricViewColorPickerColor `json:"afterCharColor"`
+	BeforeOutlineColor LyricViewColorPickerColor `json:"beforeOutlineColor"`
+	AfterOutlineColor  LyricViewColorPickerColor `json:"afterOutlineColor"`
 }
 
-type lyricViewColorPickerColor struct {
+type LyricViewColorPickerColor struct {
 	Red   int `json:"red"`
 	Green int `json:"green"`
 	Blue  int `json:"blue"`
 }
 
-type lyricViewLyricString []lyricViewLyricChar
+type LyricViewLyricString []LyricViewLyricChar
 
-type lyricViewLyricChar struct {
+type LyricViewLyricChar struct {
 	Furigana  string `json:"furigana"`
 	Length    int    `json:"length"`
 	LyricChar string `json:"char"`
 }
 
-func (p LyricInterface) ListLyrics() ([]lyricView, error) {
+func (p LyricInterface) ListLyrics() ([]LyricView, error) {
 	lyrics, err := p.service.ListLyrics()
 	if err != nil {
 		return nil, err
 	}
 
-	var view []lyricView
+	var view []LyricView
 	for _, l := range lyrics {
-		var lyrics lyricViewLyricString
+		var lyrics LyricViewLyricString
 		for _, lst := range l.Lyric() {
-			lyrics = append(lyrics, lyricViewLyricChar{
+			lyrics = append(lyrics, LyricViewLyricChar{
 				lst.Furigana(),
 				lst.Length(),
 				lst.Char(),
 			})
 		}
-		view = append(view, lyricView{
-			Point: lyricViewPoint{l.Point().X(), l.Point().Y()},
-			Colors: lyricViewColorPicker{
-				lyricViewColorPickerColor{
+		view = append(view, LyricView{
+			Point: LyricViewPoint{l.Point().X(), l.Point().Y()},
+			Colors: LyricViewColorPicker{
+				LyricViewColorPickerColor{
 					l.Colors().BeforeCharColor().Red(),
 					l.Colors().BeforeCharColor().Green(),
 					l.Colors().BeforeCharColor().Blue(),
 				},
-				lyricViewColorPickerColor{
+				LyricViewColorPickerColor{
 					l.Colors().AfterCharColor().Red(),
 					l.Colors().AfterCharColor().Green(),
 					l.Colors().AfterCharColor().Blue(),
 				},
-				lyricViewColorPickerColor{
+				LyricViewColorPickerColor{
 					l.Colors().BeforeOutlineColor().Red(),
 					l.Colors().BeforeOutlineColor().Green(),
 					l.Colors().BeforeOutlineColor().Blue(),
 				},
-				lyricViewColorPickerColor{
+				LyricViewColorPickerColor{
 					l.Colors().AfterOutlineColor().Red(),
 					l.Colors().AfterOutlineColor().Green(),
 					l.Colors().AfterOutlineColor().Blue(),
