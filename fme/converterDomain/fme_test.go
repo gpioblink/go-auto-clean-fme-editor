@@ -2,7 +2,6 @@ package fme_test
 
 import (
 	"encoding/base64"
-	"fmt"
 	fme "github.com/gpioblink/go-auto-clean-fme-editor/fme/converterDomain"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -15,7 +14,6 @@ func TestNewFmeFromBinary(t *testing.T) {
 
 	fmeOut, err := fmeStructData.ExportBinary()
 	assert.NoError(t, err)
-	fmt.Printf("%#v", fmeStructData)
 	assert.EqualValues(t, fmeData, fmeOut)
 }
 
