@@ -39,6 +39,19 @@ func (d *HeaderDataPart) ExportBinary() ([]byte, error) {
 	return bufHeader.Bytes(), nil
 }
 
+var OffsetContradicted = errors.New("contradicting offset")
+
+func (d *HeaderDataPart) UpdateOffsets(infoDataOffset uint32, lyricOffset uint32, timingOffset uint32) error {
+	if !(infoDataOffset < lyricOffset && lyricOffset < timingOffset) {
+		return OffsetContradicted
+	}
+	d.InformationDataPartOffset = infoDataOffset
+	d.LyricOffset = lyricOffset
+	d.TimingOffset = timingOffset
+
+	return nil
+}
+
 func (d *HeaderDataPart) GetOffsets() (infoDataOffset uint32, lyricOffset uint32, timingOffset uint32) {
 	return d.InformationDataPartOffset, d.LyricOffset, d.TimingOffset
 }

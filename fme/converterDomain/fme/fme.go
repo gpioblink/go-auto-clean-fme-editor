@@ -34,11 +34,6 @@ func NewFmeFromBinary(fme []byte) (*Fme, error) {
 }
 
 func (f Fme) ExportBinary() ([]byte, error) {
-	// TODO: recalculate offsets
-	header, err := f.HeaderDataPart.ExportBinary()
-	if err != nil {
-		return nil, err
-	}
 
 	info, err := f.InformationDataPart.ExportBinary()
 	if err != nil {
@@ -51,6 +46,20 @@ func (f Fme) ExportBinary() ([]byte, error) {
 	}
 
 	timing, err := f.TimingDataPart.ExportBinary()
+	if err != nil {
+		return nil, err
+	}
+
+	// recalculate offsets for header
+	infoOffset := uint32(0x12)
+	lyricOffset := infoOffset + uint32(len(info))
+	timingOffset := lyricOffset + uint32(len(lyric))
+	err = f.HeaderDataPart.UpdateOffsets(infoOffset, lyricOffset, timingOffset)
+	if err != nil {
+		return nil, err
+	}
+
+	header, err := f.HeaderDataPart.ExportBinary()
 	if err != nil {
 		return nil, err
 	}
