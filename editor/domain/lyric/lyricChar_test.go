@@ -64,6 +64,13 @@ func TestNewLyricChar(t *testing.T) {
 			length:      2,
 			furigana:    "きみ",
 		},
+		{ // TODO: 半角は実態に合わせて要挙動修正
+			TestName:    "半角文字の場合",
+			ExpectedErr: true,
+			char:        "88",
+			length:      2,
+			furigana:    "abcd",
+		},
 	}
 
 	for _, c := range testCases {
