@@ -59,7 +59,19 @@ type LyricRuby struct {
 type LyricRubyChar [2]byte
 
 var ErrMultipleChar = errors.New("char must be a character")
-var ErrBeyondBinary = errors.New("width beyond acceptable length")
+var ErrBeyondBinary = errors.New("value beyond acceptable length")
+
+func NewLyricBody(lyrics []LyricChar, ruby []LyricRuby) (*LyricBody, error) {
+
+	if !(0 < len(lyrics) && len(lyrics) < math.MaxUint16) {
+		return nil, ErrBeyondBinary
+	}
+	if !(0 < len(ruby) && len(ruby) < math.MaxUint16) {
+		return nil, ErrBeyondBinary
+	}
+
+	return &LyricBody{uint16(len(lyrics)), lyrics, uint16(len(ruby)), ruby}, nil
+}
 
 func NewLyricChar(char string, width int) (*LyricChar, error) {
 	fontCode := byte(0x00) // shift_jis
