@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+	errors2 "github.com/pkg/errors"
 	"golang.org/x/text/encoding/japanese"
 	"golang.org/x/text/transform"
 	"io"
@@ -52,8 +53,10 @@ type LyricChar struct {
 type LyricRuby struct {
 	RubyCharCount           uint16
 	RelativeHorizontalPoint uint16
-	RubyChar                []byte
+	RubyChar                []LyricRubyChar
 }
+
+type LyricRubyChar [2]byte
 
 var ErrMultipleChar = errors.New("char must be a character")
 var ErrBeyondBinary = errors.New("width beyond acceptable length")
@@ -61,14 +64,12 @@ var ErrBeyondBinary = errors.New("width beyond acceptable length")
 func NewLyricChar(char string, width int) (*LyricChar, error) {
 	fontCode := byte(0x00) // shift_jis
 
-	var charByte [2]byte
 	b, err := ConvertUTF8CharToShiftJis(char)
 	if err != nil {
 		return nil, err
 	}
 
-	charByte[0] = b[1]
-	charByte[1] = b[0]
+	charByte := allocateTwoBytesSliceForTwoByte(b)
 
 	widthTime := uint16(width)
 	if !(0 < width && width < math.MaxUint16) {
@@ -76,6 +77,38 @@ func NewLyricChar(char string, width int) (*LyricChar, error) {
 	}
 
 	return &LyricChar{fontCode, charByte, widthTime}, nil
+}
+
+func NewLyricRuby(ruby string, horizontalPoint int) (*LyricRuby, error) {
+	rc := utf8.RuneCountInString(ruby)
+	rubyCountUint16 := uint16(rc)
+	if !(0 < rc && rc < math.MaxUint16) {
+		return nil, ErrBeyondBinary
+	}
+
+	horizontalPointUint16 := uint16(horizontalPoint)
+	if !(0 < horizontalPoint && horizontalPoint < math.MaxUint16) {
+		return nil, ErrBeyondBinary
+	}
+
+	var rubyBinary []LyricRubyChar
+	for _, c := range ruby {
+		rbc, err := ConvertUTF8CharToShiftJis(string(c))
+		if err != nil {
+			return nil, err
+		}
+		charByte := allocateTwoBytesSliceForTwoByte(rbc)
+		rubyBinary = append(rubyBinary, charByte)
+	}
+
+	return &LyricRuby{rubyCountUint16, horizontalPointUint16, rubyBinary}, nil
+}
+
+func allocateTwoBytesSliceForTwoByte(b []byte) [2]byte {
+	var charByte [2]byte
+	charByte[0] = b[1]
+	charByte[1] = b[0]
+	return charByte
 }
 
 func ConvertUTF8StringToShiftJis(s string) ([]byte, error) {
@@ -112,7 +145,7 @@ func NewLyricDataPartFromBinary(fme []byte) (*LyricDataPart, error) {
 	var lyricColorPicker LyricColorPicker
 	err := binary.Read(buf, binary.LittleEndian, &lyricColorPicker)
 	if err != nil {
-		return nil, err
+		return nil, errors2.Wrap(err, "fail to read color")
 	}
 
 	var lyricBlocks []LyricBlock
@@ -122,27 +155,27 @@ func NewLyricDataPartFromBinary(fme []byte) (*LyricDataPart, error) {
 		if err == io.EOF {
 			break // break if I read all lyric
 		} else if err != nil {
-			return nil, err
+			return nil, errors2.Wrap(err, "fail to read header")
 		}
 
 		var lyricCount uint16
 		err = binary.Read(buf, binary.LittleEndian, &lyricCount)
 		if err != nil {
-			return nil, err
+			return nil, errors2.Wrap(err, "fail to read lyricCount")
 		}
 
 		lyricString := make([]LyricChar, lyricCount)
 		for i := 0; i < int(lyricCount); i++ {
 			err = binary.Read(buf, binary.LittleEndian, &lyricString[i])
 			if err != nil {
-				return nil, err
+				return nil, errors2.Wrap(err, "fail to read lyricChar[%d]")
 			}
 		}
 
 		var rubyCount uint16
 		err = binary.Read(buf, binary.LittleEndian, &rubyCount)
 		if err != nil {
-			return nil, err
+			return nil, errors2.Wrap(err, "fail to read rubyCount")
 		}
 
 		var lyricRuby []LyricRuby
@@ -150,19 +183,23 @@ func NewLyricDataPartFromBinary(fme []byte) (*LyricDataPart, error) {
 			var rubyCharCount uint16
 			err = binary.Read(buf, binary.LittleEndian, &rubyCharCount)
 			if err != nil {
-				return nil, err
+				return nil, errors2.Wrap(err, "fail to read rubyCharCount")
 			}
 
 			var relativeHorizontalPoint uint16
 			err = binary.Read(buf, binary.LittleEndian, &relativeHorizontalPoint)
 			if err != nil {
-				return nil, err
+				return nil, errors2.Wrap(err, "fail to read ruby horizontal point")
 			}
 
-			rubyString := make([]byte, rubyCharCount*2) // shift-jis needs 2bytes par a character
-			err = binary.Read(buf, binary.LittleEndian, &rubyString)
-			if err != nil {
-				return nil, err
+			var rubyString []LyricRubyChar
+			for j := 0; j < int(rubyCharCount); j++ {
+				var rubyChar LyricRubyChar
+				err = binary.Read(buf, binary.LittleEndian, &rubyChar)
+				if err != nil {
+					return nil, errors2.Wrap(err, "fail to read ruby char")
+				}
+				rubyString = append(rubyString, rubyChar)
 			}
 
 			lyricRuby = append(lyricRuby, LyricRuby{
@@ -183,45 +220,48 @@ func (d *LyricDataPart) ExportBinary() ([]byte, error) {
 
 	err := binary.Write(buf, binary.LittleEndian, d.Colors)
 	if err != nil {
-		return nil, err
+		return nil, errors2.Wrap(err, "fail to read color")
 	}
 
 	for _, b := range d.LyricBlocks {
 		// lyric header
 		err = binary.Write(buf, binary.LittleEndian, b.LyricHeader)
 		if err != nil {
-			return nil, err
+			return nil, errors2.Wrap(err, "fail to write header")
 		}
 
 		// lyric body
 		err = binary.Write(buf, binary.LittleEndian, b.LyricBody.LyricCount)
 		if err != nil {
-			return nil, err
+			return nil, errors2.Wrap(err, "fail to write lyricCount")
 		}
 
 		for _, c := range b.LyricBody.Lyrics {
 			err = binary.Write(buf, binary.LittleEndian, c)
 			if err != nil {
-				return nil, err
+				return nil, errors2.Wrap(err, "fail to write lyricBody")
 			}
 		}
 
 		err = binary.Write(buf, binary.LittleEndian, b.LyricBody.RubyCount)
 		if err != nil {
-			return nil, err
+			return nil, errors2.Wrap(err, "fail to write ruby count")
 		}
 
 		for _, r := range b.LyricBody.Ruby {
 			err = binary.Write(buf, binary.LittleEndian, r.RubyCharCount)
 			if err != nil {
-				return nil, err
+				return nil, errors2.Wrap(err, "fail to write ruby char count")
 			}
 			err = binary.Write(buf, binary.LittleEndian, r.RelativeHorizontalPoint)
 			if err != nil {
-				return nil, err
+				return nil, errors2.Wrap(err, "fail to write ruby horizontal point")
 			}
 			for _, rb := range r.RubyChar {
 				err = binary.Write(buf, binary.LittleEndian, rb)
+				if err != nil {
+					return nil, errors2.Wrap(err, "fail to write ruby char")
+				}
 			}
 		}
 	}

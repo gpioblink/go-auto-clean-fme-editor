@@ -71,6 +71,53 @@ func TestNewLyricChar(t *testing.T) {
 	}
 }
 
+func TestNewLyricRuby(t *testing.T) {
+	testCases := []struct {
+		TestName       string
+		ExpectedErr    bool
+		ruby           string
+		rubyPoint      int
+		ExpectedBinary []byte
+	}{
+		{
+			TestName:       "2文字",
+			ExpectedErr:    false,
+			ruby:           "きみ",
+			rubyPoint:      0x0,
+			ExpectedBinary: []byte{0x02, 0x00, 0x00, 0x00, 0xab, 0x82, 0xdd, 0x82},
+		},
+		{
+			TestName:       "1文字",
+			ExpectedErr:    false,
+			ruby:           "ち",
+			rubyPoint:      0xc,
+			ExpectedBinary: []byte{0x01, 0x00, 0x0c, 0x00, 0xbf, 0x82},
+		},
+	}
+
+	for _, c := range testCases {
+		t.Run(c.TestName, func(t *testing.T) {
+			lyricRuby, err := fme.NewLyricRuby(c.ruby, c.rubyPoint)
+
+			if err != nil {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+
+				buf := new(bytes.Buffer)
+				err = binary.Write(buf, binary.LittleEndian, lyricRuby.RubyCharCount)
+				assert.NoError(t, err)
+				err = binary.Write(buf, binary.LittleEndian, lyricRuby.RelativeHorizontalPoint)
+				assert.NoError(t, err)
+				err = binary.Write(buf, binary.LittleEndian, lyricRuby.RubyChar)
+				assert.NoError(t, err)
+				assert.EqualValues(t, c.ExpectedBinary, buf.Bytes())
+			}
+
+		})
+	}
+}
+
 func TestConvertUTF8CharToShiftJis(t *testing.T) {
 	testCases := []struct {
 		TestName    string
