@@ -3,7 +3,12 @@ package fme
 import (
 	"bytes"
 	"encoding/binary"
+	"errors"
+	"golang.org/x/text/encoding/japanese"
+	"golang.org/x/text/transform"
 	"io"
+	"math"
+	"unicode/utf8"
 )
 
 type LyricDataPart struct {
@@ -50,8 +55,57 @@ type LyricRuby struct {
 	RubyChar                []byte
 }
 
+var ErrMultipleChar = errors.New("char must be a character")
+var ErrBeyondBinary = errors.New("width beyond acceptable length")
+
+func NewLyricChar(char string, width int) (*LyricChar, error) {
+	fontCode := byte(0x00) // shift_jis
+
+	var charByte [2]byte
+	b, err := ConvertUTF8CharToShiftJis(char)
+	if err != nil {
+		return nil, err
+	}
+
+	charByte[0] = b[1]
+	charByte[1] = b[0]
+
+	widthTime := uint16(width)
+	if !(0 < width && width < math.MaxUint16) {
+		return nil, ErrBeyondBinary
+	}
+
+	return &LyricChar{fontCode, charByte, widthTime}, nil
+}
+
+func ConvertUTF8StringToShiftJis(s string) ([]byte, error) {
+	t := japanese.ShiftJIS.NewEncoder()
+	sjisStr, _, err := transform.String(t, s)
+	if err != nil {
+		return nil, err
+	}
+
+	b := []byte(sjisStr)
+
+	return b, nil
+}
+
+func ConvertUTF8CharToShiftJis(s string) ([]byte, error) {
+	// TODO: 英字(半角)の扱いを要調査。変換後が1バイトだった場合の扱いが不明
+	if utf8.RuneCountInString(s) != 1 {
+		return nil, ErrMultipleChar
+	}
+
+	b, err := ConvertUTF8StringToShiftJis(s)
+	if err != nil {
+		return nil, err
+	}
+
+	return b, nil
+}
+
 func NewLyricDataPartFromBinary(fme []byte) (*LyricDataPart, error) {
-	// TODO: complex code. need some cleaning
+	// TODO: 各構造体をNew*FromBinaryに分けて残す
 
 	buf := bytes.NewBuffer(fme)
 
