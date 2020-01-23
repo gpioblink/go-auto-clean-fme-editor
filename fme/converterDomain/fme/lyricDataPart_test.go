@@ -9,6 +9,53 @@ import (
 	"testing"
 )
 
+func TestNewLyricHeaderWithStandardColorPicker(t *testing.T) {
+	testCases := []struct {
+		TestName       string
+		ExpectedErr    bool
+		LyricBodySize  int
+		X              int
+		Y              int
+		bcColor        fme.Color
+		acColor        fme.Color
+		boColor        fme.Color
+		aoColor        fme.Color
+		ExpectedBinary []byte
+	}{
+		{
+			TestName:       "基本",
+			ExpectedErr:    false,
+			LyricBodySize:  0x48,
+			X:              0x114,
+			Y:              0x17f,
+			bcColor:        *fme.NewColor(0x7fff),
+			acColor:        *fme.NewColor(0x5800),
+			boColor:        *fme.NewColor(0x0421),
+			aoColor:        *fme.NewColor(0x7fff),
+			ExpectedBinary: []byte{0x51, 0x00, 0x00, 0x00, 0x14, 0x01, 0x7f, 0x01, 0x01, 0x0a, 0x00, 0x01},
+		},
+	}
+
+	for _, c := range testCases {
+		t.Run(c.TestName, func(t *testing.T) {
+			lyricHeader, err := fme.NewLyricHeaderWithStandardColorPicker(
+				c.LyricBodySize, c.X, c.Y, c.bcColor, c.acColor, c.boColor, c.aoColor)
+
+			if err != nil {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+
+				buf := new(bytes.Buffer)
+				err = binary.Write(buf, binary.LittleEndian, lyricHeader)
+				assert.NoError(t, err)
+				assert.EqualValues(t, c.ExpectedBinary, buf.Bytes())
+			}
+
+		})
+	}
+}
+
 func TestNewLyricChar(t *testing.T) {
 	testCases := []struct {
 		TestName       string

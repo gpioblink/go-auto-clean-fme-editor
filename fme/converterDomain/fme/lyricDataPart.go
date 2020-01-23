@@ -74,9 +74,50 @@ type LyricRubyChar [2]byte
 
 var ErrMultipleChar = errors.New("char must be a character")
 var ErrBeyondBinary = errors.New("value beyond acceptable length")
+var ErrColorNotFound = errors.New("color not found")
 
-func NewLyricColorPicker() {
+var StandardColorPicker = LyricColorPicker{0x0421, 0x7fff, 0x7fe7, 0x7cbf, 0x7e40,
+	0x7cbf, 0x03c0, 0x03df, 0x00ef, 0x0140, 0x5800,
+	0x4411, 0x3420, 0x0000, 0x0000,
+}
 
+func (cp *LyricColorPicker) FindColorIndex(rgb555 uint16) (byte, error) {
+	picker := cp
+	colorBin := []uint16{picker.DarkGray, picker.White, picker.Yellow, picker.Pink, picker.Orange,
+		picker.Pink2, picker.LightGreen, picker.LightBlue, picker.DarkBlue, picker.DarkGreen, picker.GeneralMotorsRed,
+		picker.Purple, picker.Brown, picker.Custom1, picker.Custom2}
+
+	for i, v := range colorBin {
+		if rgb555 == v {
+			return byte(i), nil
+		}
+	}
+	return 255, ErrColorNotFound
+}
+
+func NewLyricHeaderWithStandardColorPicker(lyricBodySize int, x int, y int, beforeCharColor Color, afterCharColor Color,
+	beforeOutlineColor Color, afterOutlineColor Color) (*LyricHeader, error) {
+
+	picker := StandardColorPicker
+
+	bc, err := picker.FindColorIndex(beforeCharColor.GetRGB555Binary())
+	if err != nil {
+		return nil, err
+	}
+	ac, err := picker.FindColorIndex(afterCharColor.GetRGB555Binary())
+	if err != nil {
+		return nil, err
+	}
+	bo, err := picker.FindColorIndex(beforeOutlineColor.GetRGB555Binary())
+	if err != nil {
+		return nil, err
+	}
+	ao, err := picker.FindColorIndex(afterOutlineColor.GetRGB555Binary())
+	if err != nil {
+		return nil, err
+	}
+
+	return &LyricHeader{uint16(lyricBodySize + 0x09), 0x00, uint16(x), uint16(y), bc, ac, bo, ao}, nil
 }
 
 func NewLyricBody(lyrics []LyricChar, ruby []LyricRuby) (*LyricBody, error) {
