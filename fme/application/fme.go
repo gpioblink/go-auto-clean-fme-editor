@@ -58,7 +58,7 @@ func (f FmeService) ExportFme() ([]byte, error) {
 	fmeStruct.LyricDataPart.LyricBlocks = lyricBlocks
 	fmeStruct.LyricDataPart.LyricColorPicker = lyricColorPicker
 
-	fmeBinary, err := f.ExportFme()
+	fmeBinary, err := fmeStruct.ExportBinary()
 	if err != nil {
 		return nil, errors.Wrap(err, "cannot export binary")
 	}
