@@ -13,7 +13,7 @@ import (
 )
 
 type LyricDataPart struct {
-	LyricColorPicker
+	Colors      LyricColorPicker
 	LyricBlocks []LyricBlock
 }
 
@@ -22,8 +22,22 @@ type LyricBlock struct {
 	LyricBody
 }
 
-type LyricColorPicker struct {
-	Colors [15]uint16
+type LyricColorPicker struct { // fmeで入力される色はいつも一緒なので変数名にしちゃいました
+	DarkGray         uint16
+	White            uint16
+	Yellow           uint16
+	Pink             uint16
+	Orange           uint16
+	Pink2            uint16
+	LightGreen       uint16
+	LightBlue        uint16
+	DarkBlue         uint16
+	DarkGreen        uint16
+	GeneralMotorsRed uint16
+	Purple           uint16
+	Brown            uint16
+	Custom1          uint16
+	Custom2          uint16
 }
 
 type LyricHeader struct {
@@ -60,6 +74,10 @@ type LyricRubyChar [2]byte
 
 var ErrMultipleChar = errors.New("char must be a character")
 var ErrBeyondBinary = errors.New("value beyond acceptable length")
+
+func NewLyricColorPicker() {
+
+}
 
 func NewLyricBody(lyrics []LyricChar, ruby []LyricRuby) (*LyricBody, error) {
 	// TODO: このキャストした数が上限値越えてないか見るのにもっといい方法ないかな？
