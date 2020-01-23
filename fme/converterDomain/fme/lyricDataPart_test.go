@@ -34,6 +34,30 @@ func TestNewLyricHeaderWithStandardColorPicker(t *testing.T) {
 			aoColor:        *fme.NewColor(0x7fff),
 			ExpectedBinary: []byte{0x51, 0x00, 0x00, 0x00, 0x14, 0x01, 0x7f, 0x01, 0x01, 0x0a, 0x00, 0x01},
 		},
+		{
+			TestName:       "全部ff",
+			ExpectedErr:    true,
+			LyricBodySize:  0x48,
+			X:              0x114,
+			Y:              0x17f,
+			bcColor:        *fme.NewColor(0xffff),
+			acColor:        *fme.NewColor(0xffff),
+			boColor:        *fme.NewColor(0xffff),
+			aoColor:        *fme.NewColor(0xffff),
+			ExpectedBinary: []byte{0x51, 0x00, 0x00, 0x00, 0x14, 0x01, 0x7f, 0x01, 0x01, 0x0a, 0x00, 0x01},
+		},
+		{
+			TestName:       "存在しない色",
+			ExpectedErr:    true,
+			LyricBodySize:  0x48,
+			X:              0x114,
+			Y:              0x17f,
+			bcColor:        *fme.NewColor(0x7b6f),
+			acColor:        *fme.NewColor(0x4532),
+			boColor:        *fme.NewColor(0x6543),
+			aoColor:        *fme.NewColor(0x65ab),
+			ExpectedBinary: []byte{0x51, 0x00, 0x00, 0x00, 0x14, 0x01, 0x7f, 0x01, 0x01, 0x0a, 0x00, 0x01},
+		},
 	}
 
 	for _, c := range testCases {
@@ -41,7 +65,7 @@ func TestNewLyricHeaderWithStandardColorPicker(t *testing.T) {
 			lyricHeader, err := fme.NewLyricHeaderWithStandardColorPicker(
 				c.LyricBodySize, c.X, c.Y, c.bcColor, c.acColor, c.boColor, c.aoColor)
 
-			if err != nil {
+			if c.ExpectedErr {
 				assert.Error(t, err)
 			} else {
 				assert.NoError(t, err)
@@ -103,7 +127,7 @@ func TestNewLyricChar(t *testing.T) {
 		t.Run(c.TestName, func(t *testing.T) {
 			lyricChar, err := fme.NewLyricChar(c.char, c.width)
 
-			if err != nil {
+			if c.ExpectedErr {
 				assert.Error(t, err)
 			} else {
 				assert.NoError(t, err)
@@ -146,7 +170,7 @@ func TestNewLyricRuby(t *testing.T) {
 		t.Run(c.TestName, func(t *testing.T) {
 			lyricRuby, err := fme.NewLyricRuby(c.ruby, c.rubyPoint)
 
-			if err != nil {
+			if c.ExpectedErr {
 				assert.Error(t, err)
 			} else {
 				assert.NoError(t, err)
