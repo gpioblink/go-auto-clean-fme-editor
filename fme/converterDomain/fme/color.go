@@ -4,27 +4,16 @@ type Color struct {
 	RGB uint16
 }
 
-func (cl *Color) GetRGB888() (r uint8, g uint8, b uint8) {
+func (cl *Color) GetRGB888() (r int, g int, b int) {
 	colorBin := cl.RGB
-	red := (colorBin & 0b0111110000000000) >> 10
-	green := (colorBin & 0b0000001111100000) >> 5
-	blue := colorBin & 0b0000000000011111
-	red = (red * 255) / 31
-	green = (green * 255) / 31
-	blue = (blue * 255) / 31
-	return uint8(red), uint8(green), uint8(blue)
+	red := (colorBin & 0b0111110000000000) >> 7
+	green := (colorBin & 0b0000001111100000) >> 2
+	blue := colorBin & 0b0000000000011111 << 3
+	return int(red), int(green), int(blue)
 }
 
-func NewColorFromRGB888(r uint8, g uint8, b uint8) *Color {
-	r = (31 * r) / 255
-	g = (31 * g) / 255
-	b = (31 * b) / 255
-
-	var color uint16
-	color = color | (uint16(r) << 10)
-	color = color | (uint16(g) << 5)
-	color = color | uint16(b)
-
+func NewColorFromRGB888(r int, g int, b int) *Color {
+	color := uint16(((r & 0b11111000) << 7) | ((g & 0b11111000) << 2) | (b >> 3))
 	return &Color{color}
 }
 
