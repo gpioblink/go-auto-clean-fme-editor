@@ -6,9 +6,12 @@ type Color struct {
 
 func (cl *Color) GetRGB888() (r int, g int, b int) {
 	colorBin := cl.RGB
-	red := (colorBin & 0b0111110000000000) >> 7
-	green := (colorBin & 0b0000001111100000) >> 2
-	blue := colorBin & 0b0000000000011111 << 3
+	red := (colorBin & 0b0111110000000000) >> 10
+	green := (colorBin & 0b0000001111100000) >> 5
+	blue := colorBin & 0b0000000000011111
+	red = (red * 255) / 31
+	green = (green * 255) / 31
+	blue = (blue * 255) / 31
 	return int(red), int(green), int(blue)
 }
 
