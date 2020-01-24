@@ -81,6 +81,14 @@ var StandardColorPicker = LyricColorPicker{0x0421, 0x7fff, 0x7fe7, 0x7cbf, 0x7e4
 	0x4411, 0x3420, 0x0000, 0x0000,
 }
 
+func NewLyricDataPart(colorPicker LyricColorPicker, lyricBlocks []LyricBlock) (*LyricDataPart, error) {
+	return &LyricDataPart{colorPicker, lyricBlocks}, nil
+}
+
+func NewLyricBlock(header LyricHeader, body LyricBody) (*LyricBlock, error) {
+	return &LyricBlock{header, body}, nil
+}
+
 func (cp *LyricColorPicker) FindColorIndex(rgb555 uint16) (byte, error) {
 	picker := cp
 	colorBin := []uint16{picker.DarkGray, picker.White, picker.Yellow, picker.Pink, picker.Orange,
