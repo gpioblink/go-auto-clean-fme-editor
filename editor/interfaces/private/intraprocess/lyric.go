@@ -96,35 +96,35 @@ func (p LyricInterface) AddLyric(l AddLyricLyric) error {
 }
 
 type LyricView struct {
-	Point  LyricViewPoint       `json:"point"`
-	Colors LyricViewColorPicker `json:"colors"`
-	Lyric  LyricViewLyricString `json:"lyric"`
+	Point  LyricViewPoint
+	Colors LyricViewColorPicker
+	Lyric  LyricViewLyricString
 }
 
 type LyricViewPoint struct {
-	X int `json:"x"`
-	Y int `json:"y"`
+	X int
+	Y int
 }
 
 type LyricViewColorPicker struct {
-	BeforeCharColor    LyricViewColorPickerColor `json:"beforeCharColor"`
-	AfterCharColor     LyricViewColorPickerColor `json:"afterCharColor"`
-	BeforeOutlineColor LyricViewColorPickerColor `json:"beforeOutlineColor"`
-	AfterOutlineColor  LyricViewColorPickerColor `json:"afterOutlineColor"`
+	BeforeCharColor    LyricViewColorPickerColor
+	AfterCharColor     LyricViewColorPickerColor
+	BeforeOutlineColor LyricViewColorPickerColor
+	AfterOutlineColor  LyricViewColorPickerColor
 }
 
 type LyricViewColorPickerColor struct {
-	Red   int `json:"red"`
-	Green int `json:"green"`
-	Blue  int `json:"blue"`
+	Red   int
+	Green int
+	Blue  int
 }
 
 type LyricViewLyricString []LyricViewLyricChar
 
 type LyricViewLyricChar struct {
-	Furigana  string `json:"furigana"`
-	Length    int    `json:"length"`
-	LyricChar string `json:"char"`
+	Furigana  string
+	Length    int
+	LyricChar string
 }
 
 func (p LyricInterface) ListLyrics() ([]LyricView, error) {
