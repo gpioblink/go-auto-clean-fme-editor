@@ -41,7 +41,7 @@ func (s LyricService) EditLyric(cmd EditLyricCommand) error {
 	// create lyricString from Lyric
 	newLyricString := lyric.LyricString{}
 	for _, l := range cmd.Lyrics {
-		lc, err := lyric.NewLyricChar(l.LyricChar, l.Length, l.Furigana)
+		lc, err := lyric.NewLyricChar(l.LyricChar, l.Length)
 		if err != nil {
 			return errors.Wrap(err, "creating lyricString failed")
 		}
@@ -49,8 +49,19 @@ func (s LyricService) EditLyric(cmd EditLyricCommand) error {
 		newLyricString = append(newLyricString, *lc)
 	}
 
+	// create ruby from lyric
+	newRuby := lyric.RubyString{}
+	for _, r := range cmd.Ruby {
+		r, err := lyric.NewRuby(r.FedX, r.RubyString)
+		if err != nil {
+			return errors.Wrap(err, "creating ruby failed")
+		}
+
+		newRuby = append(newRuby, *r)
+	}
+
 	// insert lyricString into the original and create a new lyric
-	newLyric, err := lyric.NewLyric(originalLyric.Point(), originalLyric.Colors(), newLyricString)
+	newLyric, err := lyric.NewLyric(originalLyric.Point(), originalLyric.Colors(), newLyricString, newRuby)
 	if err != nil {
 		return errors.Wrap(err, "merging lyricString failed")
 	}
@@ -65,11 +76,16 @@ func (s LyricService) EditLyric(cmd EditLyricCommand) error {
 
 type EditLyricCommand struct {
 	Lyrics []EditLyricLyric
+	Ruby   []EditLyricRuby
 	Index  int
 }
 
+type EditLyricRuby struct {
+	FedX       int
+	RubyString string
+}
+
 type EditLyricLyric struct {
-	Furigana  string
 	Length    int
 	LyricChar string
 }
