@@ -7,9 +7,9 @@ import (
 )
 
 func TestNewLyric(t *testing.T) {
-	point, colorPicker, lyricString := createLyricContent(t)
+	point, colorPicker, lyricString, ruby := createLyricContent(t)
 
-	testLyric, err := lyric.NewLyric(point, colorPicker, lyricString)
+	testLyric, err := lyric.NewLyric(point, colorPicker, lyricString, ruby)
 	assert.NoError(t, err)
 
 	assert.EqualValues(t, point, testLyric.Point())
@@ -17,7 +17,7 @@ func TestNewLyric(t *testing.T) {
 	assert.EqualValues(t, lyricString, testLyric.Lyric())
 }
 
-func createLyricContent(t *testing.T) (lyric.Point, lyric.ColorPicker, lyric.LyricString) {
+func createLyricContent(t *testing.T) (lyric.Point, lyric.ColorPicker, lyric.LyricString, []lyric.Ruby) {
 	point, err := lyric.NewPoint(3, 7)
 	assert.NoError(t, err)
 
@@ -49,5 +49,12 @@ func createLyricContent(t *testing.T) (lyric.Point, lyric.ColorPicker, lyric.Lyr
 
 	lyricString := []lyric.LyricChar{*char1, *char2, *char3, *char4}
 
-	return *point, *colorPicker, lyricString
+	ruby1, err := lyric.NewRuby(0, "きみ")
+	assert.NoError(t, err)
+	ruby2, err := lyric.NewRuby(45, "よ")
+	assert.NoError(t, err)
+
+	rubyString := []lyric.Ruby{*ruby1, *ruby2}
+
+	return *point, *colorPicker, lyricString, rubyString
 }
