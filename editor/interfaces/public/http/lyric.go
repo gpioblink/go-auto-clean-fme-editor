@@ -144,8 +144,8 @@ type PostEditRequest struct {
 }
 
 type PostEditRuby struct {
-	FedX       int
-	RubyString string
+	FedX       int    `json:"fedx"`
+	RubyString string `json:"string"`
 }
 
 type PostEditLyricChar struct {
