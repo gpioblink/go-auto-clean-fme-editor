@@ -23,11 +23,11 @@ func (i IntraprocessService) ListLyrics() (blocks []fme.LyricBlock, colorPicker 
 		return nil, fme.LyricColorPicker{}, err
 	}
 
-	blocks, colorPicker, err = fmeBlockAndColorPickerFromIntraprocess(gotLyric)
+	blocks, colorPicker, err = convertFmeBlockAndColorPickerFromIntraprocess(gotLyric)
 	return blocks, colorPicker, err
 }
 
-func fmeBlockAndColorPickerFromIntraprocess(intraLyric []intraproces.LyricView) (blocks []fme.LyricBlock, colorPicker fme.LyricColorPicker, err error) {
+func convertFmeBlockAndColorPickerFromIntraprocess(intraLyric []intraproces.LyricView) (blocks []fme.LyricBlock, colorPicker fme.LyricColorPicker, err error) {
 	// TODO: 標準色に含まれない色があった場合の処理
 
 	blocks = []fme.LyricBlock{}
