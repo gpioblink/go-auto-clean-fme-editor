@@ -115,6 +115,7 @@ type LyricView struct {
 	Point  LyricViewPoint
 	Colors LyricViewColorPicker
 	Lyric  LyricViewLyricString
+	Ruby   lyricViewRubyString
 }
 
 type LyricViewPoint struct {
@@ -138,9 +139,15 @@ type LyricViewColorPickerColor struct {
 type LyricViewLyricString []LyricViewLyricChar
 
 type LyricViewLyricChar struct {
-	Furigana  string
 	Length    int
 	LyricChar string
+}
+
+type lyricViewRubyString []lyricViewRuby
+
+type lyricViewRuby struct {
+	FedX       int
+	RubyString string
 }
 
 func (p LyricInterface) ListLyrics() ([]LyricView, error) {
@@ -154,9 +161,15 @@ func (p LyricInterface) ListLyrics() ([]LyricView, error) {
 		var lyrics LyricViewLyricString
 		for _, lst := range l.Lyric() {
 			lyrics = append(lyrics, LyricViewLyricChar{
-				lst.Furigana(),
 				lst.Length(),
 				lst.Char(),
+			})
+		}
+		var ruby lyricViewRubyString
+		for _, r := range l.Ruby() {
+			ruby = append(ruby, lyricViewRuby{
+				r.FedX(),
+				r.RubyString(),
 			})
 		}
 		view = append(view, LyricView{
@@ -184,6 +197,7 @@ func (p LyricInterface) ListLyrics() ([]LyricView, error) {
 				},
 			},
 			Lyric: lyrics,
+			Ruby:  ruby,
 		})
 	}
 	return view, err
