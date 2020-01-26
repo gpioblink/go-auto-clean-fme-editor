@@ -240,6 +240,18 @@ func TestLyricDataPart_ExportBinary(t *testing.T) {
 	assert.EqualValues(t, fmeData, fmeOut)
 }
 
+func TestLyricBody_CalcByteSize(t *testing.T) {
+	fmeData := decodeLyricDataTestBytes()
+	lyricData, err := fme.NewLyricDataPartFromBinary(fmeData)
+	assert.NoError(t, err)
+
+	for _, lb := range lyricData.LyricBlocks {
+		originalDataSize := lb.LyricHeader.LyricDataSize
+		calculatedDataSize := lb.CalcByteSize()
+		assert.EqualValues(t, originalDataSize, calculatedDataSize)
+	}
+}
+
 func decodeLyricDataTestBytes() []byte {
 	kimigayoBase64 := "IQT/f+d/v3xAfr98wAPfA+8AQAEAWBFEIDQAAAAAMgAAAHQAIQEBCgABBAAATowwAACqgjAAAOORMAAAzYIsAAIAAgAAAKuC3YIBAGwA5oJRAAAAFAF/AQEKAAEHAADnkDAAAOORMAAAyYIoAACqlDAAAOeQMAAA45EwAADJgigABQABAAwAv4IBADwA5oIBAJQA4oIBAMQAv4IBAPQA5oIxAAAAdADDAAEKAAEFAACzgigAALSCLgAA6oIwAADOkDAAAMyCLAABAAIAhgCigrWCMwAAAC4BIQEBCgABBwAAooIqAADtgi4AAKiCLAAAxoImAADIgi4AAOiCJAAAxIIqAAAAMwAAAM4AfwEBCgABBwAAsYIoAACvgiwAAMyCLAAA3oIsAAC3giwAANyCJgAAxYIuAAAA"
 	kimigayoBytes, _ := base64.StdEncoding.DecodeString(kimigayoBase64)

@@ -22,6 +22,10 @@ type LyricBlock struct {
 	LyricBody
 }
 
+func (lb LyricBlock) CalcByteSize() int {
+	return 0xc + lb.LyricBody.CalcByteSize()
+}
+
 type LyricColorPicker struct { // fmeで入力される色はいつも一緒なので変数名にしちゃいました
 	DarkGray         uint16
 	White            uint16
@@ -58,16 +62,37 @@ type LyricBody struct {
 	Ruby       []LyricRuby
 }
 
+func (lb LyricBody) CalcByteSize() int {
+	count := 0x2 + 0x2 // LyricCount, RubyCount
+	for _, l := range lb.Lyrics {
+		count += l.CalcByteSize()
+	}
+	for _, r := range lb.Ruby {
+		count += r.CalcByteSize()
+	}
+	return count
+}
+
 type LyricChar struct {
 	FontCode byte
 	Char     [2]byte
 	Width    uint16
 }
 
+func (lc LyricChar) CalcByteSize() int {
+	return 0x05
+}
+
 type LyricRuby struct {
 	RubyCharCount           uint16
 	RelativeHorizontalPoint uint16
 	RubyChar                []LyricRubyChar
+}
+
+func (lr LyricRuby) CalcByteSize() int {
+	count := 0x02 + 0x02 // rubyCharCount, relativeHorizontalPoint
+	count += len(lr.RubyChar) * 0x02
+	return count
 }
 
 type LyricRubyChar [2]byte
