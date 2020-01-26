@@ -33,7 +33,7 @@ func (f FmeService) ImportFme(fmeByte []byte) error {
 	}
 
 	for _, lb := range fmeStruct.LyricDataPart.LyricBlocks {
-		if err := f.lyricService.AddLyric(lb, fmeStruct.LyricDataPart.LyricColorPicker); err != nil {
+		if err := f.lyricService.AddLyric(lb, fmeStruct.LyricDataPart.Colors); err != nil {
 			return errors.Wrap(err, "cannot add lyric")
 		}
 	}
@@ -56,7 +56,7 @@ func (f FmeService) ExportFme() ([]byte, error) {
 
 	// TODO: make appropriate functions
 	fmeStruct.LyricDataPart.LyricBlocks = lyricBlocks
-	fmeStruct.LyricDataPart.LyricColorPicker = lyricColorPicker
+	fmeStruct.LyricDataPart.Colors = lyricColorPicker
 
 	fmeBinary, err := fmeStruct.ExportBinary()
 	if err != nil {
