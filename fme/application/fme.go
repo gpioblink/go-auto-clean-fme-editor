@@ -65,39 +65,3 @@ func (f FmeService) ExportFme() ([]byte, error) {
 
 	return fmeBinary, nil
 }
-
-//func convertRGB555BinaryToRGB888Color(colorBin uint16) FmeColor {
-//	r := (colorBin & 0b0111110000000000) >> 10
-//	g := (colorBin & 0b0000001111100000) >> 5
-//	b := colorBin & 0b0000000000011111
-//	r = (r * 255) / 31
-//	g = (g * 255) / 31
-//	b = (b * 255) / 31
-//	return NewFmeColor(int(r), int(g), int(b))
-//}
-
-//func TestCreateColorPalette(t *testing.T) {
-//	fme := decodeTestBytes()
-//	fmeColors, err := application.CreateColorPalette(fme, 0x77)
-//	assert.NoError(t, err)
-//
-//	fmeExpectedColors := []application.FmeColor{
-//		application.NewFmeColor(0x08, 0x08, 0x08),
-//		application.NewFmeColor(0xff, 0xff, 0xff),
-//		application.NewFmeColor(0xff, 0xff, 0x39),
-//		application.NewFmeColor(0xff, 0x29, 0xff),
-//		application.NewFmeColor(0xff, 0x94, 0x00),
-//		application.NewFmeColor(0xff, 0x29, 0xff),
-//		application.NewFmeColor(0x00, 0xf6, 0x00),
-//		application.NewFmeColor(0x00, 0xf6, 0xff),
-//		application.NewFmeColor(0x00, 0x39, 0x7b),
-//		application.NewFmeColor(0x00, 0x52, 0x00),
-//		application.NewFmeColor(0xb4, 0x00, 0x00),
-//		application.NewFmeColor(0x8b, 0x00, 0x8b),
-//		application.NewFmeColor(0x6a, 0x08, 0x00),
-//		application.NewFmeColor(0x00, 0x00, 0x00),
-//		application.NewFmeColor(0x00, 0x00, 0x00),
-//	}
-//
-//	assert.EqualValues(t, fmeExpectedColors, fmeColors)
-//}
