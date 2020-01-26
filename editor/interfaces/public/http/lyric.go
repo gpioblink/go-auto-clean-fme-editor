@@ -32,9 +32,15 @@ func (o lyricResource) GetAll(w http.ResponseWriter, r *http.Request) {
 		var lyrics lyricViewLyricString
 		for _, lst := range l.Lyric() {
 			lyrics = append(lyrics, lyricViewLyricChar{
-				lst.Furigana(),
 				lst.Length(),
 				lst.Char(),
+			})
+		}
+		var rubyString lyricViewRubyString
+		for _, r := range l.Ruby() {
+			rubyString = append(rubyString, lyricViewRuby{
+				r.FedX(),
+				r.RubyString(),
 			})
 		}
 		view = append(view, lyricView{
@@ -62,6 +68,7 @@ func (o lyricResource) GetAll(w http.ResponseWriter, r *http.Request) {
 				},
 			},
 			Lyric: lyrics,
+			Ruby:  rubyString,
 		})
 	}
 
@@ -72,6 +79,7 @@ type lyricView struct {
 	Point  lyricViewPoint       `json:"point"`
 	Colors lyricViewColorPicker `json:"colors"`
 	Lyric  lyricViewLyricString `json:"lyric"`
+	Ruby   lyricViewRubyString  `json:"ruby"`
 }
 
 type lyricViewPoint struct {
@@ -92,10 +100,16 @@ type lyricViewColorPickerColor struct {
 	Blue  int `json:"blue"`
 }
 
+type lyricViewRubyString []lyricViewRuby
+
+type lyricViewRuby struct {
+	FedX       int    `json:"fedx"`
+	RubyString string `json:"string"`
+}
+
 type lyricViewLyricString []lyricViewLyricChar
 
 type lyricViewLyricChar struct {
-	Furigana  string `json:"furigana"`
 	Length    int    `json:"length"`
 	LyricChar string `json:"char"`
 }
@@ -126,10 +140,15 @@ func (o lyricResource) PostEdit(w http.ResponseWriter, r *http.Request) {
 type PostEditRequest struct {
 	Index       int                 `json:"index"`
 	LyricString []PostEditLyricChar `json:"lyric"`
+	Ruby        []PostEditRuby      `json:"ruby"`
+}
+
+type PostEditRuby struct {
+	FedX       int
+	RubyString string
 }
 
 type PostEditLyricChar struct {
-	Furigana  string `json:"furigana"`
 	Length    int    `json:"len"`
 	LyricChar string `json:"char"`
 }
