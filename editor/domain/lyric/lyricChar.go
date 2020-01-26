@@ -12,9 +12,8 @@ var ErrConvertShiftJIS = errors.New("cannot use a char that is not available in 
 var ErrInvalidLength = errors.New("length is positive value")
 
 type LyricChar struct {
-	char     string
-	length   int
-	furigana string
+	char   string
+	length int
 }
 
 func (lc LyricChar) Char() string {
@@ -25,11 +24,7 @@ func (lc LyricChar) Length() int {
 	return lc.length
 }
 
-func (lc LyricChar) Furigana() string {
-	return lc.furigana
-}
-
-func NewLyricChar(char string, length int, furigana string) (*LyricChar, error) {
+func NewLyricChar(char string, length int) (*LyricChar, error) {
 	if utf8.RuneCountInString(char) != 1 {
 		return nil, ErrMultipleCharactersInChar
 	}
@@ -42,9 +37,5 @@ func NewLyricChar(char string, length int, furigana string) (*LyricChar, error) 
 		return nil, ErrConvertShiftJIS
 	}
 
-	if _, _, err := transform.String(japanese.ShiftJIS.NewEncoder(), furigana); err != nil {
-		return nil, ErrConvertShiftJIS
-	}
-
-	return &LyricChar{char, length, furigana}, nil
+	return &LyricChar{char, length}, nil
 }

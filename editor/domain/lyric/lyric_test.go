@@ -35,16 +35,16 @@ func createLyricContent(t *testing.T) (lyric.Point, lyric.ColorPicker, lyric.Lyr
 
 	colorPicker, err := lyric.NewColorPicker(*color1, *color2, *color3, *color4)
 
-	char1, err := lyric.NewLyricChar("君", 16, "きみ")
+	char1, err := lyric.NewLyricChar("君", 16)
 	assert.NoError(t, err)
 
-	char2, err := lyric.NewLyricChar("が", 23, "")
+	char2, err := lyric.NewLyricChar("が", 23)
 	assert.NoError(t, err)
 
-	char3, err := lyric.NewLyricChar("与", 23, "")
+	char3, err := lyric.NewLyricChar("与", 23)
 	assert.NoError(t, err)
 
-	char4, err := lyric.NewLyricChar("は", 23, "")
+	char4, err := lyric.NewLyricChar("は", 23)
 	assert.NoError(t, err)
 
 	lyricString := []lyric.LyricChar{*char1, *char2, *char3, *char4}
