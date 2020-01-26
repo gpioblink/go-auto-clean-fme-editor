@@ -130,6 +130,18 @@ func (cp *LyricColorPicker) FindColorIndex(rgb555 uint16) (byte, error) {
 	return 255, ErrColorNotFound
 }
 
+func (cp *LyricColorPicker) IndexToColor(index int) (uint16, error) {
+	picker := cp
+	colorBin := []uint16{picker.DarkGray, picker.White, picker.Yellow, picker.Pink, picker.Orange,
+		picker.Pink2, picker.LightGreen, picker.LightBlue, picker.DarkBlue, picker.DarkGreen, picker.GeneralMotorsRed,
+		picker.Purple, picker.Brown, picker.Custom1, picker.Custom2}
+
+	if len(colorBin) <= index {
+		return 255, ErrBeyondBinary
+	}
+	return colorBin[index], nil
+}
+
 func NewLyricHeaderWithStandardColorPicker(lyricBodySize int, x int, y int, beforeCharColor Color, afterCharColor Color,
 	beforeOutlineColor Color, afterOutlineColor Color) (*LyricHeader, error) {
 
