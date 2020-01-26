@@ -12,6 +12,8 @@ import (
 	"unicode/utf8"
 )
 
+const LyricHeaderSize = 0xc
+
 type LyricDataPart struct {
 	Colors      LyricColorPicker
 	LyricBlocks []LyricBlock
@@ -23,7 +25,7 @@ type LyricBlock struct {
 }
 
 func (lb LyricBlock) CalcByteSize() int {
-	return 0xc + lb.LyricBody.CalcByteSize()
+	return LyricHeaderSize + lb.LyricBody.CalcByteSize()
 }
 
 type LyricColorPicker struct { // fmeで入力される色はいつも一緒なので変数名にしちゃいました
@@ -150,7 +152,9 @@ func NewLyricHeaderWithStandardColorPicker(lyricBodySize int, x int, y int, befo
 		return nil, err
 	}
 
-	return &LyricHeader{uint16(lyricBodySize + 0x09), 0x00, uint16(x), uint16(y), bc, ac, bo, ao}, nil
+	lyricDataSize := uint16(lyricBodySize + LyricHeaderSize)
+
+	return &LyricHeader{lyricDataSize, 0x00, uint16(x), uint16(y), bc, ac, bo, ao}, nil
 }
 
 func NewLyricBody(lyrics []LyricChar, ruby []LyricRuby) (*LyricBody, error) {
