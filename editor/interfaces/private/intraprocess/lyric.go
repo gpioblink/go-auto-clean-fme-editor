@@ -14,6 +14,7 @@ type AddLyricLyric struct {
 	Point  AddLyricPoint
 	Colors AddLyricColorPicker
 	Lyric  AddLyricLyricString
+	Ruby   AddLyricRubyString
 }
 
 type AddLyricPoint struct {
@@ -37,9 +38,15 @@ type AddLyricColorPickerColor struct {
 type AddLyricLyricString []AddLyricLyricChar
 
 type AddLyricLyricChar struct {
-	Furigana  string
 	Length    int
 	LyricChar string
+}
+
+type AddLyricRubyString []AddLyricRuby
+
+type AddLyricRuby struct {
+	FedX       int
+	RubyString string
 }
 
 func NewLyricsInterface(service application.LyricService) LyricInterface {
@@ -50,11 +57,20 @@ func (p LyricInterface) AddLyric(l AddLyricLyric) error {
 	// TODO: 本当はlyric作成の部分だけ抜き出して作成部分を作りたい
 	var lyricString lyric.LyricString
 	for _, lst := range l.Lyric {
-		lyricChar, err := lyric.NewLyricChar(lst.Furigana, lst.Length, lst.LyricChar)
+		lyricChar, err := lyric.NewLyricChar(lst.LyricChar, lst.Length)
 		if err != nil {
 			return errors.Wrap(err, "cannot parse lyricChar")
 		}
 		lyricString = append(lyricString, *lyricChar)
+	}
+
+	var rubyString lyric.RubyString
+	for _, r := range l.Ruby {
+		ruby, err := lyric.NewRuby(r.FedX, r.RubyString)
+		if err != nil {
+			return errors.Wrap(err, "cannot parse rubyString")
+		}
+		rubyString = append(rubyString, *ruby)
 	}
 
 	newPoint, err := lyric.NewPoint(l.Point.X, l.Point.Y)
@@ -87,7 +103,7 @@ func (p LyricInterface) AddLyric(l AddLyricLyric) error {
 		return errors.Wrap(err, "cannot merge colors")
 	}
 
-	newLyric, err := lyric.NewLyric(*newPoint, *newColorPicker, lyricString)
+	newLyric, err := lyric.NewLyric(*newPoint, *newColorPicker, lyricString, rubyString)
 	if err != nil {
 		return errors.Wrap(err, "cannot make lyric")
 	}
