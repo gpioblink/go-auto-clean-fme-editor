@@ -189,7 +189,7 @@ func TestNewLyricRuby(t *testing.T) {
 	}
 }
 
-func TestConvertUTF8CharToShiftJis(t *testing.T) {
+func TestConvertUTF8CharToShiftJisAndReverse(t *testing.T) {
 	testCases := []struct {
 		TestName    string
 		ExpectedErr bool
@@ -224,6 +224,10 @@ func TestConvertUTF8CharToShiftJis(t *testing.T) {
 			} else {
 				assert.NoError(t, err)
 				assert.EqualValues(t, c.sjisByte, sjisByte)
+
+				utf8Str, err := fme.ConvertShiftJisToUTF8(sjisByte)
+				assert.NoError(t, err)
+				assert.EqualValues(t, c.utfString, utf8Str)
 			}
 		})
 	}
