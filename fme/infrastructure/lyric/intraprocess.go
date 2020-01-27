@@ -14,7 +14,80 @@ func NewIntraprocessService(intraprocessInterface intraproces.LyricInterface) In
 }
 
 func (i IntraprocessService) AddLyric(block fme.LyricBlock, colorPicker fme.LyricColorPicker) error {
+	intraLyric := convertIntraprocessFromFmeBlockAndColorPicker(block, colorPicker)
 
+	err := i.intraprocessInterface.AddLyric(*intraLyric)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func convertIntraprocessFromFmeBlockAndColorPicker(fmeBlock fme.LyricBlock, fmeColorPicker fme.LyricColorPicker) *intraproces.AddLyricLyric {
+
+	// color picker
+	fmeBcR, fmeBcG, fmeBcB := fme.NewColor(fmeColorPicker.IndexToColor(int(fmeBlock.ColorSelectBC))).GetRGB888()
+	bc := intraproces.AddLyricColorPickerColor{
+		Red:   fmeBcR,
+		Green: fmeBcG,
+		Blue:  fmeBcB,
+	}
+	fmeAcR, fmeAcG, fmeAcB := fme.NewColor(fmeColorPicker.IndexToColor(int(fmeBlock.ColorSelectAC))).GetRGB888()
+	ac := intraproces.AddLyricColorPickerColor{
+		Red:   fmeAcR,
+		Green: fmeAcG,
+		Blue:  fmeAcB,
+	}
+	fmeBoR, fmeBoG, fmeBoB := fme.NewColor(fmeColorPicker.IndexToColor(int(fmeBlock.ColorSelectBO))).GetRGB888()
+	bo := intraproces.AddLyricColorPickerColor{
+		Red:   fmeBoR,
+		Green: fmeBoG,
+		Blue:  fmeBoB,
+	}
+	fmeAoR, fmeAoG, fmeAoB := fme.NewColor(fmeColorPicker.IndexToColor(int(fmeBlock.ColorSelectAO))).GetRGB888()
+	ao := intraproces.AddLyricColorPickerColor{
+		Red:   fmeAoR,
+		Green: fmeAoG,
+		Blue:  fmeAoB,
+	}
+	cp := intraproces.AddLyricColorPicker{
+		BeforeCharColor:    bc,
+		AfterCharColor:     ac,
+		BeforeOutlineColor: bo,
+		AfterOutlineColor:  ao,
+	}
+
+	// lyricString
+	var ls intraproces.AddLyricLyricString
+	for _, s := range fmeBlock.Lyrics {
+		ls = append(ls, intraproces.AddLyricLyricChar{
+			Length:    s.GetWidth(),
+			LyricChar: s.GetChar(),
+		})
+	}
+
+	// rubyString
+	var rs intraproces.AddLyricRubyString
+	for _, r := range fmeBlock.Ruby {
+		rs = append(rs, intraproces.AddLyricRuby{
+			FedX:       r.GetRelativeHorizontalPoint(),
+			RubyString: r.GetRubyChar(),
+		})
+	}
+
+	// point
+	pt := intraproces.AddLyricPoint{
+		X: int(fmeBlock.X),
+		Y: int(fmeBlock.Y),
+	}
+
+	return &intraproces.AddLyricLyric{
+		Point:  pt,
+		Colors: cp,
+		Lyric:  ls,
+		Ruby:   rs,
+	}
 }
 
 func (i IntraprocessService) ListLyrics() (blocks []fme.LyricBlock, colorPicker fme.LyricColorPicker, err error) {
