@@ -50,6 +50,12 @@ func TestNewLyricChar(t *testing.T) {
 			char:        "8",
 			length:      2,
 		},
+		{
+			TestName:    "ヌル文字がついている場合",
+			ExpectedErr: true,
+			char:        "8\x00",
+			length:      2,
+		},
 	}
 
 	for _, c := range testCases {
