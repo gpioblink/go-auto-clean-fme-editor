@@ -139,8 +139,8 @@ func convertFmeBlockAndColorPickerFromIntraprocess(intraLyric []intraproces.Lyri
 
 		bc := fme.NewColorFromRGB888(il.Colors.BeforeCharColor.Red,
 			il.Colors.BeforeCharColor.Green, il.Colors.BeforeCharColor.Blue)
-		ac := fme.NewColorFromRGB888(il.Colors.BeforeCharColor.Red,
-			il.Colors.BeforeCharColor.Green, il.Colors.BeforeCharColor.Blue)
+		ac := fme.NewColorFromRGB888(il.Colors.AfterCharColor.Red,
+			il.Colors.AfterCharColor.Green, il.Colors.AfterCharColor.Blue)
 		bo := fme.NewColorFromRGB888(il.Colors.BeforeOutlineColor.Red,
 			il.Colors.BeforeOutlineColor.Green, il.Colors.BeforeOutlineColor.Blue)
 		ao := fme.NewColorFromRGB888(il.Colors.AfterOutlineColor.Red,
