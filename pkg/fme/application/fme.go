@@ -38,7 +38,7 @@ func (f FmeService) ImportFme(fmeByte []byte) error {
 		}
 	}
 
-	log.Printf("fme file #{fme.fmeStruct} imported")
+	log.Printf("fme file sucessfuly imported")
 
 	return nil
 }
