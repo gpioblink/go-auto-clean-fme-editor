@@ -27,7 +27,7 @@ func (o lyricResource) GetAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var view []lyricView
+	var view []LyricView
 	for _, l := range lyrics {
 		var lyrics lyricViewLyricString
 		for _, lst := range l.Lyric() {
@@ -43,7 +43,7 @@ func (o lyricResource) GetAll(w http.ResponseWriter, r *http.Request) {
 				r.RubyString(),
 			})
 		}
-		view = append(view, lyricView{
+		view = append(view, LyricView{
 			Point: lyricViewPoint{l.Point().X(), l.Point().Y()},
 			Colors: lyricViewColorPicker{
 				lyricViewColorPickerColor{
@@ -72,10 +72,14 @@ func (o lyricResource) GetAll(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	render.Respond(w, r, view)
+	render.Respond(w, r, LyricData{view})
 }
 
-type lyricView struct {
+type LyricData struct {
+	LyricViews []LyricView `json:"view"`
+}
+
+type LyricView struct {
 	Point  lyricViewPoint       `json:"point"`
 	Colors lyricViewColorPicker `json:"colors"`
 	Lyric  lyricViewLyricString `json:"lyric"`
