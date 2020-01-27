@@ -44,7 +44,7 @@ func TestNewLyricChar(t *testing.T) {
 			char:        "",
 			length:      2,
 		},
-		{ // TODO: 半角は実態に合わせて要挙動修正
+		{
 			TestName:    "半角文字の場合",
 			ExpectedErr: false,
 			char:        "8",
