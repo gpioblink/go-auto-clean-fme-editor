@@ -15,6 +15,20 @@ type LyricRuby struct {
 	RubyChar                []LyricRubyChar
 }
 
+func (lr LyricRuby) GetRelativeHorizontalPoint() int {
+	return int(lr.RelativeHorizontalPoint)
+}
+
+func (lr LyricRuby) GetRubyChar() string {
+	var rubyBinary []byte
+	for _, lrc := range lr.RubyChar {
+		rubyBinary = append(rubyBinary, lrc[0])
+		rubyBinary = append(rubyBinary, lrc[1])
+	}
+	utf8Str, _ := ConvertShiftJisToUTF8(rubyBinary)
+	return utf8Str
+}
+
 func (lr LyricRuby) CalcByteSize() int {
 	count := 0x02 + 0x02 // rubyCharCount, relativeHorizontalPoint
 	count += len(lr.RubyChar) * 0x02
