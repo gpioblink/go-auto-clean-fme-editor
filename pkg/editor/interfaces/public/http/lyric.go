@@ -153,6 +153,6 @@ type PostEditRuby struct {
 }
 
 type PostEditLyricChar struct {
-	Length    int    `json:"len"`
+	Length    int    `json:"length"`
 	LyricChar string `json:"char"`
 }
