@@ -25,7 +25,7 @@ func TestNewLyricHeaderWithStandardColorPicker(t *testing.T) {
 		{
 			TestName:       "基本",
 			ExpectedErr:    false,
-			LyricBodySize:  0x48,
+			LyricBodySize:  0x45,
 			X:              0x114,
 			Y:              0x17f,
 			bcColor:        *fme.NewColor(0x7fff),
