@@ -43,7 +43,7 @@ func NewLyricRuby(ruby string, horizontalPoint int) (*LyricRuby, error) {
 	}
 
 	horizontalPointUint16 := uint16(horizontalPoint)
-	if !(0 < horizontalPoint && horizontalPoint < math.MaxUint16) {
+	if !(0 <= horizontalPoint && horizontalPoint <= math.MaxUint16) {
 		return nil, ErrBeyondBinary
 	}
 
