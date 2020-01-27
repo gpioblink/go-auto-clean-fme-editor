@@ -187,6 +187,10 @@ func TestNewLyricRuby(t *testing.T) {
 				err = binary.Write(buf, binary.LittleEndian, lyricRuby.RubyChar)
 				assert.NoError(t, err)
 				assert.EqualValues(t, c.ExpectedBinary, buf.Bytes())
+
+				// test getter
+				assert.EqualValues(t, c.ruby, lyricRuby.GetRubyChar())
+				assert.EqualValues(t, c.rubyPoint, lyricRuby.GetRelativeHorizontalPoint())
 			}
 
 		})
