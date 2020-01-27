@@ -3,6 +3,7 @@ package lyric
 import (
 	intraproces "github.com/gpioblink/go-auto-clean-fme-editor/pkg/editor/interfaces/private/intraprocess"
 	"github.com/gpioblink/go-auto-clean-fme-editor/pkg/fme/converterDomain/fme"
+	"github.com/pkg/errors"
 )
 
 type IntraprocessService struct {
@@ -111,7 +112,7 @@ func convertFmeBlockAndColorPickerFromIntraprocess(intraLyric []intraproces.Lyri
 		for _, l := range il.Lyric {
 			lyricChar, err := fme.NewLyricChar(l.LyricChar, l.Length)
 			if err != nil {
-				return nil, fme.LyricColorPicker{}, err
+				return nil, fme.LyricColorPicker{}, errors.Wrap(err, "failed to generate lyricChar")
 			}
 			lyricString = append(lyricString, *lyricChar)
 		}
@@ -121,7 +122,7 @@ func convertFmeBlockAndColorPickerFromIntraprocess(intraLyric []intraproces.Lyri
 		for _, r := range il.Ruby {
 			ruby, err := fme.NewLyricRuby(r.RubyString, r.FedX)
 			if err != nil {
-				return nil, fme.LyricColorPicker{}, err
+				return nil, fme.LyricColorPicker{}, errors.Wrap(err, "failed to generate lyricString")
 			}
 			rubyString = append(rubyString, *ruby)
 		}
@@ -129,7 +130,7 @@ func convertFmeBlockAndColorPickerFromIntraprocess(intraLyric []intraproces.Lyri
 		// body
 		body, err := fme.NewLyricBody(lyricString, rubyString)
 		if err != nil {
-			return nil, fme.LyricColorPicker{}, err
+			return nil, fme.LyricColorPicker{}, errors.Wrap(err, "failed to generate lyricBody")
 		}
 
 		// header
@@ -146,12 +147,12 @@ func convertFmeBlockAndColorPickerFromIntraprocess(intraLyric []intraproces.Lyri
 			il.Colors.AfterOutlineColor.Green, il.Colors.AfterOutlineColor.Blue)
 		header, err := fme.NewLyricHeaderWithStandardColorPicker(body.CalcByteSize(), xPoint, yPoint, *bc, *ac, *bo, *ao)
 		if err != nil {
-			return nil, fme.LyricColorPicker{}, err
+			return nil, fme.LyricColorPicker{}, errors.Wrap(err, "failed to generate lyricHeader")
 		}
 
 		block, err := fme.NewLyricBlock(*header, *body)
 		if err != nil {
-			return nil, fme.LyricColorPicker{}, err
+			return nil, fme.LyricColorPicker{}, errors.Wrap(err, "failed to generate lyricBlock")
 		}
 
 		blocks = append(blocks, *block)
