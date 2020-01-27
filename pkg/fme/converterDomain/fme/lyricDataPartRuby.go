@@ -22,8 +22,8 @@ func (lr LyricRuby) GetRelativeHorizontalPoint() int {
 func (lr LyricRuby) GetRubyChar() string {
 	var rubyBinary []byte
 	for _, lrc := range lr.RubyChar {
-		rubyBinary = append(rubyBinary, lrc[0])
 		rubyBinary = append(rubyBinary, lrc[1])
+		rubyBinary = append(rubyBinary, lrc[0])
 	}
 	utf8Str, _ := ConvertShiftJisToUTF8(rubyBinary)
 	return utf8Str

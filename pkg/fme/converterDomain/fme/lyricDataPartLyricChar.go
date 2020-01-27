@@ -14,7 +14,7 @@ type LyricChar struct {
 }
 
 func (lc LyricChar) GetChar() string {
-	str, _ := ConvertShiftJisToUTF8([]byte{lc.Char[0], lc.Char[1]})
+	str, _ := ConvertShiftJisToUTF8([]byte{lc.Char[1], lc.Char[0]})
 	return str
 }
 
