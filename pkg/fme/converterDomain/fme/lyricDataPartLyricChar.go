@@ -46,14 +46,25 @@ func NewLyricChar(char string, width int) (*LyricChar, error) {
 
 func allocateTwoBytesSliceForTwoByte(b []byte) [2]byte {
 	var charByte [2]byte
-	charByte[0] = b[1]
-	charByte[1] = b[0]
+	if len(b) == 1 {
+		charByte[0] = b[0]
+	} else {
+		charByte[0] = b[1]
+		charByte[1] = b[0]
+	}
+
 	return charByte
 }
 
-func ConvertShiftJisToUTF8(byte []byte) (string, error) {
+func ConvertShiftJisToUTF8(byteData []byte) (string, error) {
+
+	if byteData[0] == 0x00 {
+		// 1byte目がnull文字のときは、1byteで表現できる文字。あるとutf8にもヌル文字が出来てしまうためnull文字は削除。
+		byteData = []byte{byteData[1]}
+	}
+
 	t := japanese.ShiftJIS.NewDecoder()
-	utf8Str, _, err := transform.Bytes(t, byte)
+	utf8Str, _, err := transform.Bytes(t, byteData)
 	if err != nil {
 		return "", err
 	}

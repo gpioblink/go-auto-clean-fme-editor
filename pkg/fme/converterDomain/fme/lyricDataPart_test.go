@@ -103,6 +103,13 @@ func TestNewLyricChar(t *testing.T) {
 			ExpectedBinary: []byte{0x00, 0xaa, 0x82, 0x30, 0x00},
 		},
 		{
+			TestName:       "半角英字",
+			ExpectedErr:    false,
+			char:           "o",
+			width:          26,
+			ExpectedBinary: []byte{0x00, 0x6f, 0x00, 0x1a, 0x00},
+		},
+		{
 			TestName:       "複数文字",
 			ExpectedErr:    true,
 			char:           "あいうえお",
