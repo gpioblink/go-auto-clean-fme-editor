@@ -136,6 +136,10 @@ func TestNewLyricChar(t *testing.T) {
 				err = binary.Write(buf, binary.LittleEndian, lyricChar)
 				assert.NoError(t, err)
 				assert.EqualValues(t, c.ExpectedBinary, buf.Bytes())
+
+				// test getter
+				assert.EqualValues(t, c.char, lyricChar.GetChar())
+				assert.EqualValues(t, c.width, lyricChar.GetWidth())
 			}
 
 		})
