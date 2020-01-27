@@ -23,10 +23,10 @@ func (lb LyricBody) CalcByteSize() int {
 func NewLyricBody(lyrics []LyricChar, ruby []LyricRuby) (*LyricBody, error) {
 	// TODO: このキャストした数が上限値越えてないか見るのにもっといい方法ないかな？
 
-	if !(0 < len(lyrics) && len(lyrics) < math.MaxUint16) {
+	if !(0 <= len(lyrics) && len(lyrics) < math.MaxUint16) {
 		return nil, ErrBeyondBinary
 	}
-	if !(0 < len(ruby) && len(ruby) < math.MaxUint16) {
+	if !(0 <= len(ruby) && len(ruby) < math.MaxUint16) {
 		return nil, ErrBeyondBinary
 	}
 
