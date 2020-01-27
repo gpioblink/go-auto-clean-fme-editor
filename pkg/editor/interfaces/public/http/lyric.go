@@ -130,8 +130,14 @@ func (o lyricResource) PostEdit(w http.ResponseWriter, r *http.Request) {
 		lyrics = append(lyrics, application.EditLyricLyric(l))
 	}
 
+	var ruby []application.EditLyricRuby
+	for _, r := range req.Ruby {
+		ruby = append(ruby, application.EditLyricRuby(r))
+	}
+
 	cmd := application.EditLyricCommand{
 		Lyrics: lyrics,
+		Ruby:   ruby,
 		Index:  req.Index,
 	}
 
