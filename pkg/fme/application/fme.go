@@ -1,11 +1,13 @@
 package application
 
 import (
+	"log"
+
 	"github.com/gpioblink/go-auto-clean-fme-editor/pkg/fme/converterDomain/fme"
 	"github.com/pkg/errors"
-	"log"
 )
 
+// 返り値に名前をつけるかどうかは統一した方が良さそう！
 type lyricService interface {
 	AddLyric(block fme.LyricBlock, colorPicker fme.LyricColorPicker) error
 	ListLyrics() (blocks []fme.LyricBlock, colorPicker fme.LyricColorPicker, err error)

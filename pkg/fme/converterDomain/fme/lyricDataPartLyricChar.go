@@ -1,10 +1,11 @@
 package fme
 
 import (
-	"golang.org/x/text/encoding/japanese"
-	"golang.org/x/text/transform"
 	"math"
 	"unicode/utf8"
+
+	"golang.org/x/text/encoding/japanese"
+	"golang.org/x/text/transform"
 )
 
 type LyricChar struct {
@@ -14,6 +15,7 @@ type LyricChar struct {
 }
 
 func (lc LyricChar) GetChar() string {
+	// errorが彼方に消えてる
 	str, _ := ConvertShiftJisToUTF8([]byte{lc.Char[1], lc.Char[0]})
 	return str
 }
@@ -57,7 +59,6 @@ func allocateTwoBytesSliceForTwoByte(b []byte) [2]byte {
 }
 
 func ConvertShiftJisToUTF8(byteData []byte) (string, error) {
-
 	if byteData[0] == 0x00 {
 		// 1byte目がnull文字のときは、1byteで表現できる文字。あるとutf8にもヌル文字が出来てしまうためnull文字は削除。
 		byteData = []byte{byteData[1]}

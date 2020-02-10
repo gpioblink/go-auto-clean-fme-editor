@@ -9,6 +9,7 @@ type lyricReadModel interface {
 	ListAllLyrics() ([]lyric.Lyric, error)
 }
 
+// ここの階層が揃っていないのが若干気になった！
 type LyricService struct {
 	lyricReadModel  lyricReadModel
 	lyricRepository lyric.Repository
@@ -30,8 +31,9 @@ func (s LyricService) AddLyric(lyric lyric.Lyric) error {
 	return nil
 }
 
+// ここは抽象度揃ってるところはいいね！
+// あとはここ特にRepositoryを参照していないところはdomain/lyricに持っていった方が良さそう！
 func (s LyricService) EditLyric(cmd EditLyricCommand) error {
-
 	// get original lyric
 	originalLyric, err := s.lyricRepository.ByIndex(cmd.Index)
 	if err != nil {

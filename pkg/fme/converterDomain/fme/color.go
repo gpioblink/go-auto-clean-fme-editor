@@ -4,6 +4,7 @@ type Color struct {
 	RGB uint16
 }
 
+// 再代入するよりその前段階に明確な名前をつけた方がわかりやすそう！
 func (cl *Color) GetRGB888() (r int, g int, b int) {
 	colorBin := cl.RGB
 	red := (colorBin & 0b0111110000000000) >> 10

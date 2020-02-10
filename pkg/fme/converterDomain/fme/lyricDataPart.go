@@ -4,15 +4,18 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
-	errors2 "github.com/pkg/errors"
 	"io"
+
+	errors2 "github.com/pkg/errors"
 )
 
 const LyricHeaderSize = 0xc
 
-var ErrMultipleChar = errors.New("char must be a character")
-var ErrBeyondBinary = errors.New("value beyond acceptable length")
-var ErrColorNotFound = errors.New("color not found")
+var (
+	ErrMultipleChar  = errors.New("char must be a character")
+	ErrBeyondBinary  = errors.New("value beyond acceptable length")
+	ErrColorNotFound = errors.New("color not found")
+)
 
 type LyricDataPart struct {
 	Colors      LyricColorPicker
@@ -23,9 +26,13 @@ func NewLyricDataPart(colorPicker LyricColorPicker, lyricBlocks []LyricBlock) (*
 	return &LyricDataPart{colorPicker, lyricBlocks}, nil
 }
 
+// 仕様がわかんないからあれだけど雰囲気で書いていく
+// とりあえず、それぞれのバイナリのを読むところを名前をつけて関数に切った方が後で読んだときにここは何を読んでるかわかりやすいと思いました！
+// 所々、コメントで他の関数はその辺担保しているところも見られたので、コメントでもいいかも
 func NewLyricDataPartFromBinary(fme []byte) (*LyricDataPart, error) {
 	// TODO: 各構造体をNew*FromBinaryに分けて残す
 
+	// 僕だったらbytes.NewReader
 	buf := bytes.NewBuffer(fme)
 
 	var lyricColorPicker LyricColorPicker

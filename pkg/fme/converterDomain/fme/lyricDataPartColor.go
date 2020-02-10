@@ -18,16 +18,30 @@ type LyricColorPicker struct { // fmeで入力される色はいつも一緒な�
 	Custom2          uint16
 }
 
-var StandardColorPicker = LyricColorPicker{0x0421, 0x7fff, 0x7fe7, 0x7cbf, 0x7e40,
+var StandardColorPicker = LyricColorPicker{
+	0x0421, 0x7fff, 0x7fe7, 0x7cbf, 0x7e40,
 	0x7cbf, 0x03c0, 0x03df, 0x00ef, 0x0140, 0x5800,
 	0x4411, 0x3420, 0x0000, 0x0000,
 }
 
+func (cp *LyricColorPicker) colorBin() []uint64 {
+	picker := cp
+	colorBin := []uint16{
+		picker.DarkGray, picker.White, picker.Yellow, picker.Pink, picker.Orange,
+		picker.Pink2, picker.LightGreen, picker.LightBlue, picker.DarkBlue, picker.DarkGreen, picker.GeneralMotorsRed,
+		picker.Purple, picker.Brown, picker.Custom1, picker.Custom2,
+	}
+	return colorBin
+}
+
 func (cp *LyricColorPicker) FindColorIndex(rgb555 uint16) (byte, error) {
 	picker := cp
-	colorBin := []uint16{picker.DarkGray, picker.White, picker.Yellow, picker.Pink, picker.Orange,
+	// これを返すだけの非公開レシーバ関数にあると良さそう
+	colorBin := []uint16{
+		picker.DarkGray, picker.White, picker.Yellow, picker.Pink, picker.Orange,
 		picker.Pink2, picker.LightGreen, picker.LightBlue, picker.DarkBlue, picker.DarkGreen, picker.GeneralMotorsRed,
-		picker.Purple, picker.Brown, picker.Custom1, picker.Custom2}
+		picker.Purple, picker.Brown, picker.Custom1, picker.Custom2,
+	}
 
 	for i, v := range colorBin {
 		if rgb555 == v {
@@ -39,9 +53,12 @@ func (cp *LyricColorPicker) FindColorIndex(rgb555 uint16) (byte, error) {
 
 func (cp *LyricColorPicker) IndexToColor(index int) uint16 {
 	picker := cp
-	colorBin := []uint16{picker.DarkGray, picker.White, picker.Yellow, picker.Pink, picker.Orange,
+	// これを返すだけの非公開レシーバ関数にあると良さそう
+	colorBin := []uint16{
+		picker.DarkGray, picker.White, picker.Yellow, picker.Pink, picker.Orange,
 		picker.Pink2, picker.LightGreen, picker.LightBlue, picker.DarkBlue, picker.DarkGreen, picker.GeneralMotorsRed,
-		picker.Purple, picker.Brown, picker.Custom1, picker.Custom2}
+		picker.Purple, picker.Brown, picker.Custom1, picker.Custom2,
+	}
 
 	if len(colorBin) <= index {
 		return 255

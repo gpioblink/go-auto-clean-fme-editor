@@ -2,14 +2,18 @@ package lyric
 
 import (
 	"errors"
+	"unicode/utf8"
+
 	"golang.org/x/text/encoding/japanese"
 	"golang.org/x/text/transform"
-	"unicode/utf8"
 )
 
-var ErrMultipleCharactersInChar = errors.New("char must have 1 character")
-var ErrConvertShiftJIS = errors.New("cannot use a char that is not available in shift_jis")
-var ErrInvalidLength = errors.New("length is positive value")
+// まとめて定義でも良さそう
+var (
+	ErrMultipleCharactersInChar = errors.New("char must have 1 character")
+	ErrConvertShiftJIS          = errors.New("cannot use a char that is not available in shift_jis")
+	ErrInvalidLength            = errors.New("length is positive value")
+)
 
 type LyricChar struct {
 	char   string

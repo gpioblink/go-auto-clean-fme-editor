@@ -23,6 +23,7 @@ func (c Color) Blue() int {
 }
 
 func NewColor(red int, green int, blue int) (*Color, error) {
+	// これそれぞれ別関数にしていると読みやすそいう（全然これでもわかる）
 	if (0 <= red && red <= 255) && (0 <= green && green <= 255) && (0 <= blue && blue <= 255) {
 		return &Color{red, green, blue}, nil
 	}

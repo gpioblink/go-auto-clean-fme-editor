@@ -1,8 +1,9 @@
 package http
 
 import (
-	"github.com/go-chi/render"
 	"net/http"
+
+	"github.com/go-chi/render"
 )
 
 type ErrResponse struct {
@@ -12,7 +13,8 @@ type ErrResponse struct {
 	ErrorText      string `json:"error,omitempty"`
 }
 
-func (e *ErrResponse) Render(w http.ResponseWriter, r *http.Request) error {
+// 使わないなら、安全に_にした方が良さそう
+func (e *ErrResponse) Render(_ http.ResponseWriter, r *http.Request) error {
 	render.Status(r, e.HTTPStatusCode)
 	return nil
 }

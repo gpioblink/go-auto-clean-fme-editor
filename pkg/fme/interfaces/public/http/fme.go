@@ -2,16 +2,21 @@ package http
 
 import (
 	"encoding/base64"
+	"net/http"
+
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	commonHttp "github.com/gpioblink/go-auto-clean-fme-editor/pkg/common/http"
 	"github.com/gpioblink/go-auto-clean-fme-editor/pkg/fme/application"
 	"github.com/gpioblink/go-auto-clean-fme-editor/pkg/fme/converterDomain/fme"
-	"net/http"
 )
 
 func AddRoutes(router *chi.Mux, service application.FmeService, repository fme.Repository) {
 	resource := fmeResource{service, repository}
+	// router.Group(func(r chi.Router) {
+	//	r.Post("/import", resource.PostImport)
+	//	r.Get("/export", resource.GetExport)
+	//})
 	router.Post("/fme/import", resource.PostImport)
 	router.Get("/fme/export", resource.GetExport)
 }

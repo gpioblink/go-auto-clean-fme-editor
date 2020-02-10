@@ -26,7 +26,6 @@ func (i IntraprocessService) AddLyric(block fme.LyricBlock, colorPicker fme.Lyri
 }
 
 func convertIntraprocessFromFmeBlockAndColorPicker(fmeBlock fme.LyricBlock, fmeColorPicker fme.LyricColorPicker) *intraproces.AddLyricLyric {
-
 	// color picker
 	fmeBcR, fmeBcG, fmeBcB := fme.NewColor(fmeColorPicker.IndexToColor(int(fmeBlock.ColorSelectBC))).GetRGB888()
 	bc := intraproces.AddLyricColorPickerColor{
@@ -133,6 +132,7 @@ func convertFmeBlockAndColorPickerFromIntraprocess(intraLyric []intraproces.Lyri
 			return nil, fme.LyricColorPicker{}, errors.Wrap(err, "failed to generate lyricBody")
 		}
 
+		// NewLyricHeaderWithStandardColorPickerの前で定義して良さそう？
 		// header
 		xPoint := il.Point.X
 		yPoint := il.Point.Y
